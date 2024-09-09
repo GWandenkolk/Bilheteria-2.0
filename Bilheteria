@@ -1,0 +1,79 @@
+using System;
+using System.Windows.Forms;
+
+namespace Bilheteria
+{
+    public partial class Form1 : Form
+    {
+        const int TOTAL_FILEIRAS = 15;
+        const int POLTRONAS_POR_FILEIRA = 40;
+        readonly int[] PRECO_FILEIRAS = {50, 50, 50, 50, 50, 30, 30, 30, 30, 30, 15, 15, 15, 15, 15};
+        Button[,] poltronas = new Button[TOTAL_FILEIRAS, POLTRONAS_POR_FILEIRA];
+
+        public Form1()
+        {
+            InitializeComponent();
+            InicializarTeatro();
+        }
+
+        private void InicializarTeatro()
+        {
+            for (int i = 0; i < TOTAL_FILEIRAS; i++)
+            {
+                for (int j = 0; j < POLTRONAS_POR_FILEIRA; j++)
+                {
+                    poltronas[i, j] = new Button();
+                    poltronas[i, j].Width = 25;
+                    poltronas[i, j].Height = 25;
+                    poltronas[i, j].Text = ".";
+                    poltronas[i, j].Tag = new int[] { i, j };
+                    poltronas[i, j].Click += new EventHandler(ReservarPoltrona);
+                    tableLayoutPanel1.Controls.Add(poltronas[i, j], j, i);
+                }
+            }
+        }
+
+        private void ReservarPoltrona(object sender, EventArgs e)
+        {
+            Button poltrona = (Button)sender;
+            int[] posicao = (int[])poltrona.Tag;
+            int fileira = posicao[0];
+            int assento = posicao[1];
+
+            if (poltrona.Text == "#")
+            {
+                MessageBox.Show("Desculpe, essa poltrona já está ocupada.");
+            }
+            else
+            {
+                poltrona.Text = "#";
+                poltrona.BackColor = System.Drawing.Color.Red;
+            }
+        }
+
+        private void BtnFaturamento_Click(object sender, EventArgs e)
+        {
+            int lugaresOcupados = 0;
+            double valorBilheteria = 0.0;
+
+            for (int i = 0; i < TOTAL_FILEIRAS; i++)
+            {
+                for (int j = 0; j < POLTRONAS_POR_FILEIRA; j++)
+                {
+                    if (poltronas[i, j].Text == "#")
+                    {
+                        lugaresOcupados++;
+                        valorBilheteria += PRECO_FILEIRAS[i];
+                    }
+                }
+            }
+
+            MessageBox.Show($"Quantidade de lugares ocupados: {lugaresOcupados}\nValor total da bilheteria: R$ {valorBilheteria:0.00}");
+        }
+
+        private void BtnMapa_Click(object sender, EventArgs e)
+        {
+            // Código para exibir o mapa de ocupação pode ser adicionado aqui.
+        }
+    }
+}
